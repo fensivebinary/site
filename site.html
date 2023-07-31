@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<html lang='en' class=''>
+
+<head>
+
+  <meta charset='UTF-8'>
+
+  <title>Junaid</title>
+
+  <meta name="robots" content="noindex">
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Overpass:300,400,600,800">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png" />
+<link rel="shortcut icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
+<link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg" color="#111" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+<script>window.console = window.console || function(t) {};</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+<script>
+    function downloadResume() {
+      const pdfUrl = "https://frozenstrawberries.github.io/resume/assets/pdfs/Muhammad_Junaid_Raza.pdf";
+      
+      // Get the PDF as a blob
+      fetch(pdfUrl)
+        .then(response => response.blob())
+        .then(blob => {
+          // Create a temporary anchor element to trigger the download
+          const downloadLink = document.createElement("a");
+          downloadLink.href = URL.createObjectURL(blob);
+          downloadLink.download = "Muhammad_Junaid_Raza.pdf";
+          downloadLink.click();
+  
+          // Clean up
+          URL.revokeObjectURL(downloadLink.href);
+        })
+        .catch(error => {
+          console.error("Error downloading PDF:", error);
+        });
+    }
+  </script>
+
+<style>
+    .btn-underline-download {
+  background-color: transparent;
+  color: #06c;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-underline-download::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #06c;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.btn-underline-download:hover::before {
+  transform: scaleX(1);
+}
+  </style>
+  <style id="INLINE_PEN_STYLESHEET_ID">
+    /*
+ CSS for the main interaction
+*/
+.tabset > input[type="radio"] {
+  position: absolute;
+  left: -200vw;
+}
+
+.tabset .tab-panel {
+  display: none;
+}
+
+.tabset .tab-panel canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+.tabset > input:first-child:checked ~ .tab-panels > .tab-panel:first-child,
+.tabset > input:nth-child(3):checked ~ .tab-panels > .tab-panel:nth-child(2),
+.tabset > input:nth-child(5):checked ~ .tab-panels > .tab-panel:nth-child(3),
+.tabset > input:nth-child(7):checked ~ .tab-panels > .tab-panel:nth-child(4),
+.tabset > input:nth-child(9):checked ~ .tab-panels > .tab-panel:nth-child(5),
+.tabset > input:nth-child(11):checked ~ .tab-panels > .tab-panel:nth-child(6) {
+  display: block;
+}
+
+/*
+ Styling
+*/
+
+body {
+  font: 16px/1.5em "Overpass", "Open Sans", Helvetica, sans-serif;
+  color: #333;
+  font-weight: 300;
+}
+
+.tabset > label {
+  position: relative;
+  display: inline-block;
+  padding: 15px 15px 25px;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.tabset > label::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  bottom: 10px;
+  width: 22px;
+  height: 4px;
+  background: #8d8d8d;
+}
+
+input:focus-visible + label {
+  outline: 2px solid rgba(0,102,204,1);
+  border-radius: 3px;
+}
+
+.tabset > label:hover,
+.tabset > input:focus + label,
+.tabset > input:checked + label {
+  color: #06c;
+}
+
+.tabset > label:hover::after,
+.tabset > input:focus + label::after,
+.tabset > input:checked + label::after {
+  background: #06c;
+}
+
+.tabset > input:checked + label {
+  border-color: #ccc;
+  border-bottom: 1px solid #fff;
+  margin-bottom: -1px;
+}
+
+.tab-panels {
+      display: flex;
+      flex-direction: column;
+}
+
+.tab-panel {
+      padding: 30px 0;
+      border-top: 1px solid #ccc;
+      height: calc(100vh - 170px); /* Adjust the height to fit the content within the viewport */
+      overflow-y: auto; /* Enable vertical scrolling if needed */
+      direction: ltr; /* Set the direction to right-to-left */
+      position: relative;
+}
+
+.tab-panel::-webkit-scrollbar {
+      width: 10px;
+      background-color: #f5f5f5;
+    }
+
+.tab-panel::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+    position: relative;
+}
+/*
+ Demo purposes only
+*/
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 30px;
+}
+
+.tabset {
+}
+  </style>
+    
+</head>
+
+<body>
+
+<div class="tabset">
+  <!-- Tab 1 -->
+  <input type="radio" name="tabset" id="tab1" aria-controls="home" checked>
+  <label for="tab1">Home</label>
+  <!-- Tab 2 -->
+  <input type="radio" name="tabset" id="tab2" aria-controls="stuff">
+  <label for="tab2">Stuff</label>
+  <!-- Tab 3 -->
+  <input type="radio" name="tabset" id="tab3" aria-controls="about-me">
+  <label for="tab3">About Me</label>
+  <!-- Tab 4 -->
+  <input type="radio" name="tabset" id="tab4" aria-controls="location">
+  <label for="tab4">Location</label>
+
+  <div class="tab-panels">
+    <section id="home" class="tab-panel">
+        <h2>Home section is coming soon</h2>
+        <p>Meanwhile you can check my Resume in the <strong>Aboute Me</strong> section</p>
+    </section>
+    <section id="stuff" class="tab-panel">
+        <h2>Coming Soon</h2>
+        <p><strong>This section is coming soon</strong></p>
+      </section>
+    <section id="about-me" class="tab-panel">
+        <button class="btn-underline-download" onclick="downloadResume()">Download Resume</button>
+
+        <div class="pdf-container" id="pdfContainer1"></div>
+
+        <div class="pdf-container" id="pdfContainer1"></div>
+
+        <!-- PDF rendering script for the first tab -->
+        <script>
+          function renderPdf1(pdfUrl, containerId) {
+            // Get the container element
+            const container = document.getElementById(containerId);
+
+            // Asynchronous function to load and render the PDF
+            const renderTask = pdfjsLib.getDocument(pdfUrl).promise.then(function (pdfDoc) {
+              // Set the desired scale for the pages (1.0 is 100%)
+              const scale = 1.5;
+
+              // Render all pages
+              const numPages = pdfDoc.numPages;
+              const renderPromises = [];
+              for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
+                renderPromises.push(pdfDoc.getPage(pageNumber).then(function (page) {
+                  // Get the viewport of the page at the desired scale
+                  const viewport = page.getViewport({ scale: scale });
+
+                  // Create a canvas element to render the page
+                  const canvas = document.createElement("canvas");
+
+                  // Set the dimensions of the canvas to match the viewport
+                  canvas.width = viewport.width;
+                  canvas.height = viewport.height;
+
+                  // Append the canvas to the container
+                  container.appendChild(canvas);
+
+                  // Get the context of the canvas to render the page
+                  const context = canvas.getContext("2d");
+
+                  // Render the page content into the canvas
+                  const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport,
+                  };
+                  return page.render(renderContext).promise;
+                }));
+              }
+
+              return Promise.all(renderPromises);
+            });
+
+            return renderTask;
+          }
+
+          // Call the function with the PDF URL and the container ID for the first tab
+          const pdfUrl1 = "https://frozenstrawberries.github.io/resume/assets/pdfs/Muhammad_Junaid_Raza.pdf";
+          const containerId1 = "pdfContainer1";
+          renderPdf1(pdfUrl1, containerId1).then(() => {
+            console.log("PDF rendered successfully for the first tab!");
+          }).catch((error) => {
+            console.error("Error rendering PDF for the first tab:", error);
+          });
+        </script>
+      </section>
+      <section id="location" class="tab-panel">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d783220.3298181574!2d4.941751573505571!3d52.382861163307574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c63fb5949a7755%3A0x6600fd4cb7c0af8d!2sAmsterdam!5e0!3m2!1sen!2snl!4v1690666806933!5m2!1sen!2snl&maptype=satellite" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="fast"></iframe>
+    </section>
+    
+  </div>
+  
+</div>
+  
+</body>
+
+</html>
