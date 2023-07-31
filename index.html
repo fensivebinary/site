@@ -42,6 +42,39 @@
         });
     }
   </script>
+  <script>
+    // Function to change the URL when a tab is clicked
+    function changeTabAndURL(tabId, tabName) {
+      // Update the URL without reloading the page
+      const newURL = window.location.pathname + "#" + tabName;
+      window.history.pushState({ tab: tabName }, "", newURL);
+
+      // Show the selected tab content
+      showTabContent(tabId);
+    }
+
+    // Function to show the selected tab content
+    function showTabContent(tabId) {
+      // Hide all tab panels
+      const tabPanels = document.querySelectorAll(".tab-panel");
+      tabPanels.forEach(panel => {
+        panel.style.display = "none";
+      });
+
+      // Show the selected tab panel
+      const selectedTabPanel = document.getElementById(tabId);
+      if (selectedTabPanel) {
+        selectedTabPanel.style.display = "block";
+      }
+    }
+
+    // Function to handle back/forward navigation
+    window.onpopstate = function (event) {
+      if (event.state && event.state.tab) {
+        showTabContent(event.state.tab);
+      }
+    };
+  </script>
 
 <style>
     .btn-underline-download {
@@ -198,18 +231,18 @@ body {
 <body>
 
 <div class="tabset">
-  <!-- Tab 1 -->
-  <input type="radio" name="tabset" id="tab1" aria-controls="home" checked>
-  <label for="tab1">Home</label>
-  <!-- Tab 2 -->
-  <input type="radio" name="tabset" id="tab2" aria-controls="stuff">
-  <label for="tab2">Stuff</label>
-  <!-- Tab 3 -->
-  <input type="radio" name="tabset" id="tab3" aria-controls="about-me">
-  <label for="tab3">About Me</label>
-  <!-- Tab 4 -->
-  <input type="radio" name="tabset" id="tab4" aria-controls="location">
-  <label for="tab4">Location</label>
+    <!-- Tab 1 -->
+    <input type="radio" name="tabset" id="tab1" aria-controls="home" checked onclick="changeTabAndURL('home', 'Home')">
+    <label for="tab1">Home</label>
+    <!-- Tab 2 -->
+    <input type="radio" name="tabset" id="tab2" aria-controls="stuff" onclick="changeTabAndURL('stuff', 'Stuff')">
+    <label for="tab2">Stuff</label>
+    <!-- Tab 3 -->
+    <input type="radio" name="tabset" id="tab3" aria-controls="about-me" onclick="changeTabAndURL('about-me', 'AboutMe')">
+    <label for="tab3">About Me</label>
+    <!-- Tab 4 -->
+    <input type="radio" name="tabset" id="tab4" aria-controls="location" onclick="changeTabAndURL('location', 'Location')">
+    <label for="tab4">Location</label>
 
   <div class="tab-panels">
     <section id="home" class="tab-panel">
