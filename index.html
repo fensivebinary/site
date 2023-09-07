@@ -20,6 +20,10 @@
 <script>window.console = window.console || function(t) {};</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script>
     function downloadResume() {
       const pdfUrl = "https://fensivebinary.github.io/site/Muhammad_Junaid_Raza.pdf";
@@ -75,6 +79,344 @@
       }
     };
   </script>
+<script>
+  function make_chart() {
+  
+  // Create root element
+  // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+  var root = am5.Root.new("chartdiv");
+  
+  
+  // Set themes
+  // https://www.amcharts.com/docs/v5/concepts/themes/
+  root.setThemes([
+    am5themes_Animated.new(root)
+  ]);
+  
+  
+  // Create the map chart
+  // https://www.amcharts.com/docs/v5/charts/map-chart/
+  var chart = root.container.children.push(am5map.MapChart.new(root, {
+    panX: "translateX",
+    panY: "translateY",
+    homeZoomLevel: 3.5,
+    //position: "relative",
+    homeGeoPoint: { longitude: 57.4481, latitude: 46.9480 },
+    projection: am5map.geoMercator()
+  }));
+  
+  var cont = chart.children.push(am5.Container.new(root, {
+    layout: root.horizontalLayout,
+    x: 20,
+    y: 40
+  }));
+  
+  
+  // Add labels and controls
+  cont.children.push(am5.Label.new(root, {
+    centerY: am5.p50,
+    text: "Map"
+  }));
+  
+  var switchButton = cont.children.push(am5.Button.new(root, {
+    themeTags: ["switch"],
+    centerY: am5.p50,
+    icon: am5.Circle.new(root, {
+      themeTags: ["icon"]
+    })
+  }));
+  
+  switchButton.on("active", function() {
+    if (!switchButton.get("active")) {
+      chart.set("projection", am5map.geoMercator());
+      chart.set("panX", "translateX");
+      chart.set("panY", "translateY");
+    }
+    else {
+      chart.set("projection", am5map.geoOrthographic());
+      chart.set("panX", "rotateX");
+      chart.set("panY", "rotateY");
+    }
+  });
+  
+  cont.children.push(am5.Label.new(root, {
+    centerY: am5.p50,
+    text: "Globe"
+  }));
+  
+  // Create main polygon series for countries
+  // https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/
+  var polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
+    geoJSON: am5geodata_worldLow
+  }));
+  
+  var graticuleSeries = chart.series.push(am5map.GraticuleSeries.new(root, {}));
+  graticuleSeries.mapLines.template.setAll({
+    stroke: root.interfaceColors.get("alternativeBackground"),
+    strokeOpacity: 0.08
+  });
+  
+  // Create line series for trajectory lines
+  // https://www.amcharts.com/docs/v5/charts/map-chart/map-line-series/
+  var lineSeries = chart.series.push(am5map.MapLineSeries.new(root, {lineType: /*"straight"*/"curved"}));
+  lineSeries.mapLines.template.setAll({
+    //stroke: root.interfaceColors.get("alternativeBackground"),
+    stroke: am5.color(0x000000),
+    strokeOpacity: 1.0
+  });
+  
+  // Create world polygon series
+  var worldSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
+    geoJSON: am5geodata_worldLow
+  }));
+  
+  worldSeries.mapPolygons.template.setAll({
+    fill: am5.color(0xcacaca),
+    fillOpacity: 0.4
+  });
+  
+  worldSeries.events.on("datavalidated", () => {
+    chart.goHome();
+  });
+
+  // Add legend
+  var legend = chart.children.push(am5.Legend.new(root, {
+    useDefaultMarker: true,
+    centerX: am5.p50,
+    x: am5.p50,
+    centerY: am5.p100,
+    y: am5.p100,
+    dy: -20,
+    background: am5.RoundedRectangle.new(root, {
+      fill: am5.color(0xffffff),
+      fillOpacity: 0.2
+    })
+  }));
+
+  legend.valueLabels.template.set("forceHidden", true)
+
+  var groupData = [
+    {
+      "name": "Countries visited so far",
+      "data": [
+        { "id": "PK"},
+        { "id": "NL"},
+        { "id": "DE"},
+        { "id": "AT"},
+        { "id": "BE"},
+        { "id": "LU"},
+        { "id": "FR"},
+        { "id": "CH"}
+      ]
+    }
+  ];
+
+    // Create series for each group
+  var colors = am5.ColorSet.new(root, {
+    step: 2
+  });
+  colors.next();
+  
+  var color = am5.color(0x00cc66);
+  
+  am5.array.each(groupData, function(group) {
+    var countries = [];
+  
+    am5.array.each(group.data, function(country) {
+      countries.push(country.id)
+    });
+  
+    var polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
+      geoJSON: am5geodata_worldLow,
+      include: countries,
+      name: group.name,
+      fill: color,
+      fillOpacity: 0.5
+    }));
+  
+  
+    polygonSeries.mapPolygons.template.setAll({
+      tooltipText: "[bold]{name}",
+      interactive: true,
+      fill: color,
+      strokeWidth: 1,
+      fillOpacity: 0.5
+    });
+  
+    polygonSeries.mapPolygons.template.states.create("hover", {
+      fill: am5.Color.brighten(color, -0.3)
+    });
+  
+    polygonSeries.mapPolygons.template.events.on("pointerover", function(ev) {
+      ev.target.series.mapPolygons.each(function(polygon) {
+        polygon.states.applyAnimate("hover");
+      });
+    });
+  
+    polygonSeries.mapPolygons.template.events.on("pointerout", function(ev) {
+      ev.target.series.mapPolygons.each(function(polygon) {
+        polygon.states.applyAnimate("default");
+      });
+    });
+    polygonSeries.data.setAll(group.data);
+  
+    legend.data.push(polygonSeries);
+    color = colors.next();
+  });
+  
+  // destination series
+  var citySeries = chart.series.push(
+    am5map.MapPointSeries.new(root, {})
+  );
+  
+  citySeries.bullets.push(function() {
+    var circle = am5.Circle.new(root, {
+      radius: 2,
+      tooltipText: "{city}",
+      tooltipY: 0,
+      fill: am5.color(0xffba00),
+      stroke: root.interfaceColors.get("background"),
+      strokeWidth: 2
+    });
+  
+    return am5.Bullet.new(root, {
+      sprite: circle
+    });
+  });
+
+  // arrow series
+  var arrowSeries = chart.series.push(
+    am5map.MapPointSeries.new(root, {})
+  );
+  
+  arrowSeries.bullets.push(function() {
+    var arrow = am5.Graphics.new(root, {
+      fill: am5.color(0x000000),
+      stroke: am5.color(0x000000),
+      draw: function (display) {
+        display.moveTo(0, -2);
+        display.lineTo(2, 0);
+        display.lineTo(0, 2);
+        display.lineTo(0, -2);
+      }
+    });
+  
+    return am5.Bullet.new(root, {
+      sprite: arrow
+    });
+  });
+
+  /*var cities = [
+    {
+      id: "1",
+      city: "Lahore",
+      geometry: { type: "Point", coordinates: [74.3587, 31.5204] },
+    },
+    {
+      id: "2",
+      city: "London",
+      geometry: { type: "Point", coordinates: [-0.1262, 51.5002] },
+    },
+    {
+      id: "3",
+      city: "Brussels",
+      geometry: { type: "Point", coordinates: [4.3676, 50.8371] }
+    }, {
+      id: "4",
+      city: "Prague",
+      geometry: { type: "Point", coordinates: [14.4205, 50.0878] }
+    }, {
+      id: "5",
+      city: "Athens",
+      geometry: { type: "Point", coordinates: [23.7166, 37.9792] }
+    }];*/
+  
+    function csvToJson(csvText) {
+          const lines = csvText.split('\n');
+          const result = [];
+          const headers = lines[0].split(',');
+
+          for (let i = 1; i < lines.length; i++) {
+              const values = lines[i].split(',');
+              if (values.length === headers.length) {
+                  const obj = {};
+                  for (let j = 0; j < headers.length; j++) {
+                      obj[headers[j]] = values[j];
+                  }
+                  result.push(obj);
+              }
+          }
+
+          return result;
+      }
+        async function fetchCSVAndConvertToJson(csvUrl) {
+            try {
+                const response = await fetch(csvUrl);
+                const csvText = await response.text();
+                const jsonArray = csvToJson(csvText);
+                return jsonArray;
+            } catch (error) {
+                console.error('Error fetching or converting CSV to JSON:', error);
+                return [];
+            }
+        }
+
+        const csvUrl = 'https://raw.githubusercontent.com/fensivebinary/site/main/locations.csv'; // Replace with the actual URL of your CSV file
+        const jsonArray = [];
+        fetchCSVAndConvertToJson(csvUrl).then(jsonArray => {
+            const resultDiv = document.getElementById("result");
+
+            jsonArray.forEach(obj => {
+                const longitude = parseFloat(obj["longitude"]);
+                const latitude = parseFloat(obj["latitude"]);
+                if (!isNaN(longitude) && !isNaN(latitude)) {
+                    obj.geometry = { type: "Point", coordinates: [longitude, latitude] };
+                }
+            });
+            var cities_init = [
+              {
+                id: "0",
+                city: "Lahore",
+                geometry: { type: "Point", coordinates: [74.3587, 31.5204] },
+              }];
+            const cities = cities_init.concat(jsonArray);
+            citySeries.data.setAll(cities);
+
+            const lastCity = cities[cities.length - 1];
+  
+            // prepare line series data
+            var destinations = cities.map(d => d.id);
+            // start coordinates
+            var originLongitude = citySeries.getDataItemById(0).get("longitude");
+            var originLatitude = citySeries.getDataItemById(0).get("latitude");
+            
+            am5.array.each(destinations, function (did) {
+              var destinationDataItem = citySeries.getDataItemById(did);
+              var lineDataItem = lineSeries.pushDataItem({ geometry: { type: "LineString", coordinates: [[originLongitude, originLatitude], [destinationDataItem.get("longitude"), destinationDataItem.get("latitude")]] } });
+            
+              arrowSeries.pushDataItem({
+                lineDataItem: lineDataItem,
+                positionOnLine: 0.5,
+                autoRotate: true
+              });
+              originLongitude = destinationDataItem.get("longitude");
+              originLatitude = destinationDataItem.get("latitude");
+              
+            })
+        });
+  
+  polygonSeries.events.on("datavalidated", function () {
+    chart.zoomToGeoPoint({ longitude: 57.4481, latitude: 46.9480 }, 3);
+  })
+  
+  
+  // Make stuff animate on load
+  chart.appear(1000, 10);
+  
+  }; // end am5.ready()
+  
+  </script>
+
 
 <style>
     .btn-underline-download {
@@ -193,7 +535,7 @@ input:focus-visible + label {
 .tab-panel {
       padding: 30px 0;
       border-top: 1px solid #ccc;
-      height: calc(100vh - 170px); /* Adjust the height to fit the content within the viewport */
+      height: calc(100vh - 130px); /* Adjust the height to fit the content within the viewport */
       overflow-y: auto; /* Enable vertical scrolling if needed */
       direction: ltr; /* Set the direction to right-to-left */
       position: relative;
@@ -225,6 +567,12 @@ body {
 .tabset {
 }
   </style>
+<style>
+  #chartdiv {
+    width: 100%;
+    height: 100%/*500px*/;
+  };
+  </style>
     
 </head>
 
@@ -241,7 +589,7 @@ body {
     <input type="radio" name="tabset" id="tab3" aria-controls="about-me" onclick="changeTabAndURL('about-me', 'AboutMe')">
     <label for="tab3">About Me</label>
     <!-- Tab 4 -->
-    <input type="radio" name="tabset" id="tab4" aria-controls="location" onclick="changeTabAndURL('location', 'Location')">
+    <input type="radio" name="tabset" id="tab4" aria-controls="location" onclick="changeTabAndURL('location', 'Location');make_chart();">
     <label for="tab4">Location</label>
 
   <div class="tab-panels">
@@ -318,7 +666,9 @@ body {
         </script>
       </section>
       <section id="location" class="tab-panel">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d783220.3298181574!2d4.941751573505571!3d52.382861163307574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c63fb5949a7755%3A0x6600fd4cb7c0af8d!2sAmsterdam!5e0!3m2!1sen!2snl!4v1690666806933!5m2!1sen!2snl&maptype=satellite" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="fast"></iframe>
+        <div id="chartdiv"></div>
+
+        <!-- Tab 4 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d783220.3298181574!2d4.941751573505571!3d52.382861163307574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c63fb5949a7755%3A0x6600fd4cb7c0af8d!2sAmsterdam!5e0!3m2!1sen!2snl!4v1690666806933!5m2!1sen!2snl&maptype=satellite" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="fast"></iframe>-->
     </section>
     
   </div>
