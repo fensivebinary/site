@@ -156,23 +156,13 @@
     strokeOpacity: 0.08
   });
   
-  // Create line series for trajectory lines
-  // https://www.amcharts.com/docs/v5/charts/map-chart/map-line-series/
-  var lineSeries = chart.series.push(am5map.MapLineSeries.new(root, {lineType: /*"straight"*/"curved"}));
-  lineSeries.mapLines.template.setAll({
-    //stroke: root.interfaceColors.get("alternativeBackground"),
-    stroke: am5.color(0x000000),
-    strokeOpacity: 1.0
-  });
-  
   // Create world polygon series
   var worldSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
     geoJSON: am5geodata_worldLow
   }));
   
   worldSeries.mapPolygons.template.setAll({
-    fill: am5.color(0xcacaca),
-    fillOpacity: 0.4
+    fill: am5.color(0x80a6cc)
   });
   
   worldSeries.events.on("datavalidated", () => {
@@ -198,9 +188,9 @@
   var groupData = [
     {
       "name": "Countries visited so far",
+      "color": am5.color(0x00cc66),
       "data": [
         { "id": "PK"},
-        { "id": "NL"},
         { "id": "DE"},
         { "id": "AT"},
         { "id": "BE"},
@@ -208,17 +198,16 @@
         { "id": "FR"},
         { "id": "CH"}
       ]
+    },{
+      "name": "Current Country",
+      "color": am5.color(0xfc8c29),
+      "data": [
+        { "id": "NL"}
+      ]
     }
   ];
 
     // Create series for each group
-  var colors = am5.ColorSet.new(root, {
-    step: 2
-  });
-  colors.next();
-  
-  var color = am5.color(0x00cc66);
-  
   am5.array.each(groupData, function(group) {
     var countries = [];
   
@@ -230,7 +219,7 @@
       geoJSON: am5geodata_worldLow,
       include: countries,
       name: group.name,
-      fill: color,
+      fill: group.color,
       fillOpacity: 0.5
     }));
   
@@ -238,13 +227,13 @@
     polygonSeries.mapPolygons.template.setAll({
       tooltipText: "[bold]{name}",
       interactive: true,
-      fill: color,
+      fill: group.color,
       strokeWidth: 1,
-      fillOpacity: 0.5
+      fillOpacity: 1
     });
   
     polygonSeries.mapPolygons.template.states.create("hover", {
-      fill: am5.Color.brighten(color, -0.3)
+      fill: am5.Color.brighten(group.color, -0.3)
     });
   
     polygonSeries.mapPolygons.template.events.on("pointerover", function(ev) {
@@ -261,9 +250,17 @@
     polygonSeries.data.setAll(group.data);
   
     legend.data.push(polygonSeries);
-    color = colors.next();
   });
   
+      // Create line series for trajectory lines
+  // https://www.amcharts.com/docs/v5/charts/map-chart/map-line-series/
+  var lineSeries = chart.series.push(am5map.MapLineSeries.new(root, {lineType: /*"straight"*/"curved"}));
+  lineSeries.mapLines.template.setAll({
+    //stroke: root.interfaceColors.get("alternativeBackground"),
+    stroke: am5.color(0x000000),
+    strokeOpacity: 1.0
+  });
+
   // destination series
   var citySeries = chart.series.push(
     am5map.MapPointSeries.new(root, {})
@@ -272,7 +269,7 @@
   citySeries.bullets.push(function() {
     var circle = am5.Circle.new(root, {
       radius: 2,
-      tooltipText: "{city}",
+      tooltipText: "{city}".concat(" (", "{year}","-", "{month}","-", "{day}",")"),
       tooltipY: 0,
       fill: am5.color(0xffba00),
       stroke: root.interfaceColors.get("background"),
@@ -288,7 +285,7 @@
   var arrowSeries = chart.series.push(
     am5map.MapPointSeries.new(root, {})
   );
-  
+
   arrowSeries.bullets.push(function() {
     var arrow = am5.Graphics.new(root, {
       fill: am5.color(0x000000),
@@ -305,31 +302,6 @@
       sprite: arrow
     });
   });
-
-  /*var cities = [
-    {
-      id: "1",
-      city: "Lahore",
-      geometry: { type: "Point", coordinates: [74.3587, 31.5204] },
-    },
-    {
-      id: "2",
-      city: "London",
-      geometry: { type: "Point", coordinates: [-0.1262, 51.5002] },
-    },
-    {
-      id: "3",
-      city: "Brussels",
-      geometry: { type: "Point", coordinates: [4.3676, 50.8371] }
-    }, {
-      id: "4",
-      city: "Prague",
-      geometry: { type: "Point", coordinates: [14.4205, 50.0878] }
-    }, {
-      id: "5",
-      city: "Athens",
-      geometry: { type: "Point", coordinates: [23.7166, 37.9792] }
-    }];*/
   
     function csvToJson(csvText) {
           const lines = csvText.split('\n');
